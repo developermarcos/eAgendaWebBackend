@@ -1,8 +1,10 @@
-﻿using eAgenda.Aplicacao.ModuloContato;
+﻿using AutoMapper;
+using eAgenda.Aplicacao.ModuloContato;
 using eAgenda.Dominio.ModuloContato;
 using eAgenda.Infra.Configs;
 using eAgenda.Infra.Orm;
 using eAgenda.Infra.Orm.ModuloContato;
+using eAgenda.Webapi.ViewModels.Contatos;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -11,71 +13,100 @@ namespace eAgenda.Webapi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ContatosController : Controller
+    public class ContatosController : eAgendaControllerBase
     {
         private readonly ServicoContato servicoContato;
-        public ContatosController()
+        private readonly IMapper mapeadorContatos;
+        
+        public ContatosController(ServicoContato servicoContato, IMapper mapeadorContatos)
         {
-            var config = new ConfiguracaoAplicacaoeAgenda();
-            var eAgendaDbContext = new eAgendaDbContext(config.ConnectionStrings);
-            var repositorioContato = new RepositorioContatoOrm(eAgendaDbContext);
-            servicoContato = new ServicoContato(repositorioContato, eAgendaDbContext);
+            this.servicoContato=servicoContato;
+            this.mapeadorContatos=mapeadorContatos;
         }
+
         [HttpGet]
-        public List<Contato> SelecionarTodos()
+        public ActionResult<List<ListarContatoViewModel>> SelecionarTodos()
         {
-            var contatoResult = servicoContato.SelecionarTodos();
+            var registroResult = servicoContato.SelecionarTodos();
 
-            if (contatoResult.IsSuccess)
-                return contatoResult.Value;
+            if (registroResult.IsFailed)
+                return InternalError(registroResult);
 
-            return null;
+            return Ok(new
+            {
+                sucesso = true,
+                dados = mapeadorContatos.Map<List<ListarContatoViewModel>>(registroResult.Value)
+            });
         }
 
         [HttpGet("{id:guid}")]
-        public Contato SelecionarPorId(Guid id)
+        public ActionResult<VisualizarContatoViewModel> SelecionarPorId(Guid id)
         {
-            var contatoResult = servicoContato.SelecionarPorId(id);
+            var registroResult = servicoContato.SelecionarPorId(id);
 
-            if (contatoResult.IsSuccess)
-                return contatoResult.Value;
+            if (registroResult.IsFailed && RegistroNaoEncontrado(registroResult))
+                return NotFound(registroResult);
 
-            return null;
+            if (registroResult.IsFailed)
+                return InternalError(registroResult);
+
+            return Ok(new
+            {
+                sucesso = true,
+                dados = mapeadorContatos.Map<VisualizarContatoViewModel>(registroResult.Value)
+            });
         }
 
         [HttpPost]
-        public Contato Inserir(Contato novoContato)
+        public ActionResult<InserirContatoViewModel> Inserir(InserirContatoViewModel contatoVM)
         {
-            var contatoResult = servicoContato.Inserir(novoContato);
+            var contato = mapeadorContatos.Map<Contato>(contatoVM);
 
-            if (contatoResult.IsSuccess)
-                return contatoResult.Value;
+            var registroResult = servicoContato.Inserir(contato);
 
-            return null;
+            if (registroResult.IsFailed)
+                return InternalError(registroResult);
+
+            return Ok(new
+            {
+                sucesso = true,
+                dados = mapeadorContatos.Map<VisualizarContatoViewModel>(registroResult.Value)
+            });
         }
 
         [HttpPut("{id:guid}")]
-        public Contato Editar(Guid id, Contato contato)
+        public ActionResult<EditarContatoViewModel> Editar(Guid id, EditarContatoViewModel contatoVM)
         {
-            var contatoEditado = servicoContato.SelecionarPorId(id).Value;
+            var contatoSelecionadaResult = servicoContato.SelecionarPorId(id);
 
-            contatoEditado.Nome = contato.Nome;
-            contatoEditado.Email = contato.Email;
-            contatoEditado.Telefone = contato.Telefone;
-            contatoEditado.Empresa = contato.Empresa;
-            contatoEditado.Cargo = contato.Cargo;
+            if (contatoSelecionadaResult.IsFailed &&  RegistroNaoEncontrado(contatoSelecionadaResult))
+                return NotFound(contatoSelecionadaResult);
+            
+            var contato = mapeadorContatos.Map(contatoVM, contatoSelecionadaResult.Value);
 
-            var tarefaResult = servicoContato.Editar(contatoEditado);
+            var contatoResult = servicoContato.Editar(contato);
 
-            if (tarefaResult.IsSuccess)
-                return tarefaResult.Value;
+            if (contatoResult.IsFailed)
+                return InternalError(contatoResult);
 
-            return null;
+            return Ok(new
+            {
+                sucesso = true,
+                dados = mapeadorContatos.Map<VisualizarContatoViewModel>(contatoResult.Value)
+            });
         }
         [HttpDelete]
-        public void Editar(Contato contato)
+        public ActionResult Editar(Contato contato)
         {
-            servicoContato.Excluir(contato);
+            var registroResult = servicoContato.Excluir(contato);
+
+            if (registroResult.IsFailed && RegistroNaoEncontrado<Contato>(registroResult))
+                return NotFound(registroResult);
+
+            if (registroResult.IsFailed)
+                return InternalError<Contato>(registroResult);
+
+            return NoContent();
         }
     }
 }

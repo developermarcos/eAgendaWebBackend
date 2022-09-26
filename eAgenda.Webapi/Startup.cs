@@ -1,9 +1,13 @@
+using eAgenda.Aplicacao.ModuloContato;
 using eAgenda.Aplicacao.ModuloTarefa;
 using eAgenda.Dominio;
+using eAgenda.Dominio.ModuloContato;
 using eAgenda.Dominio.ModuloTarefa;
 using eAgenda.Infra.Configs;
 using eAgenda.Infra.Orm;
+using eAgenda.Infra.Orm.ModuloContato;
 using eAgenda.Infra.Orm.ModuloTarefa;
+using eAgenda.Webapi.Config.AutoMapperConfig;
 using eAgenda.Webapi.CreateMap.AutoMapperCreateMap;
 using eAgenda.Webapi.Filters;
 using Microsoft.AspNetCore.Builder;
@@ -75,8 +79,12 @@ namespace eAgenda.Webapi
         private static void Dependencias(IServiceCollection services)
         {
             services.AddScoped<IContextoPersistencia, eAgendaDbContext>();
+
             services.AddScoped<IRepositorioTarefa, RepositorioTarefaOrm>();
             services.AddTransient<ServicoTarefa>();
+
+            services.AddScoped<IRepositorioContato, RepositorioContatoOrm>();
+            services.AddTransient<ServicoContato>();
         }
 
         private static void MapeadoresViewModel(IServiceCollection services)
@@ -84,6 +92,7 @@ namespace eAgenda.Webapi
             services.AddAutoMapper(config =>
             {
                 config.AddProfile<TarefaProfile>();
+                config.AddProfile<ContatoProfile>();
             });
         }
         #endregion

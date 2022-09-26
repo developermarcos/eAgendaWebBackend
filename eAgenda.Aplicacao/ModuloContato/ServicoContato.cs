@@ -11,14 +11,12 @@ namespace eAgenda.Aplicacao.ModuloContato
     {
         private IRepositorioContato repositorioContato;
         private IContextoPersistencia contextoPersistencia;
-
         public ServicoContato(IRepositorioContato repositorioContato,
                              IContextoPersistencia contexto)
         {
             this.repositorioContato = repositorioContato;
             this.contextoPersistencia = contexto;
         }
-
         public Result<Contato> Inserir(Contato contato)
         {
             Log.Logger.Debug("Tentando inserir contato... {@c}", contato);
@@ -49,7 +47,6 @@ namespace eAgenda.Aplicacao.ModuloContato
                 return Result.Fail(msgErro);
             }
         }
-
         public Result<Contato> Editar(Contato contato)
         {
             Log.Logger.Debug("Tentando editar contato... {@c}", contato);
@@ -80,7 +77,6 @@ namespace eAgenda.Aplicacao.ModuloContato
 
             return Result.Ok(contato);
         }
-
         public Result Excluir(Contato contato)
         {
             Log.Logger.Debug("Tentando excluir contato... {@c}", contato);
@@ -106,7 +102,6 @@ namespace eAgenda.Aplicacao.ModuloContato
                 return Result.Fail(msgErro);
             }
         }
-
         public Result<List<Contato>> SelecionarTodos()
         {
             Log.Logger.Debug("Tentando selecionar contatos...");
@@ -128,7 +123,6 @@ namespace eAgenda.Aplicacao.ModuloContato
                 return Result.Fail(msgErro);
             }
         }
-
         public Result<Contato> SelecionarPorId(Guid id)
         {
             Log.Logger.Debug("Tentando selecionar contato {ContatoId}...", id);
@@ -157,7 +151,5 @@ namespace eAgenda.Aplicacao.ModuloContato
                 return Result.Fail(msgErro);
             }
         }
-
-
     }
 }

@@ -24,33 +24,33 @@ namespace eAgenda.Webapi.Controllers
         [HttpGet]
         public ActionResult<List<ListarTarefaViewModel>> SelecionarTodos()
         {
-            var tarefaResult = servicoTarefa.SelecionarTodos(StatusTarefaEnum.Todos);
+            var registroResult = servicoTarefa.SelecionarTodos(StatusTarefaEnum.Todos);
 
-            if (tarefaResult.IsFailed)
-                return InternalError(tarefaResult);
+            if (registroResult.IsFailed)
+                return InternalError(registroResult);
 
             return Ok(new
             {
                 sucesso = true,
-                dados = mapeadorTarefas.Map<List<ListarTarefaViewModel>>(tarefaResult.Value)
+                dados = mapeadorTarefas.Map<List<ListarTarefaViewModel>>(registroResult.Value)
             });
         }
 
         [HttpGet("{id:guid}")]
         public ActionResult<VisualizarTarefaViewModel> SelecionarPorId(Guid id)
         {
-            var tarefaResult = servicoTarefa.SelecionarPorId(id);
+            var registroResult = servicoTarefa.SelecionarPorId(id);
 
-            if (tarefaResult.IsFailed && RegistroNaoEncontrado(tarefaResult))
-                return NotFound(tarefaResult);
+            if (registroResult.IsFailed && RegistroNaoEncontrado(registroResult))
+                return NotFound(registroResult);
 
-            if (tarefaResult.IsFailed)
-                return InternalError(tarefaResult);
+            if (registroResult.IsFailed)
+                return InternalError(registroResult);
 
             return Ok(new
             {
                 sucesso = true,
-                dados = mapeadorTarefas.Map<VisualizarTarefaViewModel>(tarefaResult.Value)
+                dados = mapeadorTarefas.Map<VisualizarTarefaViewModel>(registroResult.Value)
             });
         }
 
@@ -59,15 +59,15 @@ namespace eAgenda.Webapi.Controllers
         {
             var tarefa = mapeadorTarefas.Map<Tarefa>(tarefaVM);
 
-            var tarefaResult = servicoTarefa.Inserir(tarefa);
+            var registroResult = servicoTarefa.Inserir(tarefa);
 
-            if (tarefaResult.IsFailed)
-                return InternalError(tarefaResult);
+            if (registroResult.IsFailed)
+                return InternalError(registroResult);
 
             return Ok(new
             {
                 sucesso = true,
-                dados = mapeadorTarefas.Map<VisualizarTarefaViewModel>(tarefaResult.Value)
+                dados = mapeadorTarefas.Map<VisualizarTarefaViewModel>(registroResult.Value)
             });
         }
 
@@ -81,27 +81,27 @@ namespace eAgenda.Webapi.Controllers
 
             var tarefa = mapeadorTarefas.Map(tarefaVM, tarefaSelecionadaResult.Value);
 
-            var tarefaResult = servicoTarefa.Editar(tarefa);
+            var registroResult = servicoTarefa.Editar(tarefa);
 
-            if (tarefaResult.IsFailed)
-                return InternalError(tarefaResult);
+            if (registroResult.IsFailed)
+                return InternalError(registroResult);
 
             return Ok(new
             {
                 sucesso = true,
-                dados = mapeadorTarefas.Map<VisualizarTarefaViewModel>(tarefaResult.Value)
+                dados = mapeadorTarefas.Map<VisualizarTarefaViewModel>(registroResult.Value)
             });
         }
         [HttpDelete("{id:guid}")]
         public ActionResult Excluir(Guid id)
         {
-            var tarefaResult = servicoTarefa.Excluir(id);
+            var registroResult = servicoTarefa.Excluir(id);
 
-            if (tarefaResult.IsFailed && RegistroNaoEncontrado<Tarefa>(tarefaResult))
-                return NotFound(tarefaResult);
+            if (registroResult.IsFailed && RegistroNaoEncontrado<Tarefa>(registroResult))
+                return NotFound(registroResult);
 
-            if (tarefaResult.IsFailed)
-                return InternalError<Tarefa>(tarefaResult);
+            if (registroResult.IsFailed)
+                return InternalError<Tarefa>(registroResult);
 
             return NoContent();
         }
