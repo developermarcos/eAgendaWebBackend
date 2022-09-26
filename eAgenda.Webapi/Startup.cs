@@ -5,6 +5,7 @@ using eAgenda.Infra.Configs;
 using eAgenda.Infra.Orm;
 using eAgenda.Infra.Orm.ModuloTarefa;
 using eAgenda.Webapi.CreateMap.AutoMapperCreateMap;
+using eAgenda.Webapi.Filters;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -31,18 +32,18 @@ namespace eAgenda.Webapi
             {
                 config.SuppressModelStateInvalidFilter = true;
             });
-            services.AddAutoMapper(config =>
-            {
-                config.AddProfile<TarefaProfile>();
-            });
 
             services.AddSingleton((x) => new ConfiguracaoAplicacaoeAgenda().ConnectionStrings);
 
-            services.AddScoped<IContextoPersistencia, eAgendaDbContext>();
-            services.AddScoped<IRepositorioTarefa, RepositorioTarefaOrm>();
-            services.AddTransient<ServicoTarefa>();
+            MapeadoresViewModel(services);
 
-            services.AddControllers();
+            Dependencias(services);
+
+            services.AddControllers(config =>
+            {
+                config.Filters.Add(new ValidarViewModelActionFilter());
+            });
+
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "eAgenda.Webapi", Version = "v1" });
@@ -70,5 +71,21 @@ namespace eAgenda.Webapi
                 endpoints.MapControllers();
             });
         }
+        #region métodos privados
+        private static void Dependencias(IServiceCollection services)
+        {
+            services.AddScoped<IContextoPersistencia, eAgendaDbContext>();
+            services.AddScoped<IRepositorioTarefa, RepositorioTarefaOrm>();
+            services.AddTransient<ServicoTarefa>();
+        }
+
+        private static void MapeadoresViewModel(IServiceCollection services)
+        {
+            services.AddAutoMapper(config =>
+            {
+                config.AddProfile<TarefaProfile>();
+            });
+        }
+        #endregion
     }
 }

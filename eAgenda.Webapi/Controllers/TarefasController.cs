@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using eAgenda.Aplicacao.ModuloTarefa;
 using eAgenda.Dominio.ModuloTarefa;
-using eAgenda.Webapi.CreateMap.AutoMapperCreateMap;
 using eAgenda.Webapi.ViewModels.Tarefas;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -12,7 +11,7 @@ namespace eAgenda.Webapi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class TarefasController : ControllerBase
+    public class TarefasController : eAgendaControllerBase
     {
         private readonly ServicoTarefa servicoTarefa;
         private readonly IMapper mapeadorTarefas;
@@ -26,41 +25,28 @@ namespace eAgenda.Webapi.Controllers
         public ActionResult<List<ListarTarefaViewModel>> SelecionarTodos()
         {
             var tarefaResult = servicoTarefa.SelecionarTodos(StatusTarefaEnum.Todos);
+
             if (tarefaResult.IsFailed)
-            {
-                return StatusCode(500, new
-                {
-                    sucesso = false,
-                    error = tarefaResult.Errors.Select(x => x.Message)
-                }) ;
-            }
+                return InternalError(tarefaResult);
+
             return Ok(new
             {
                 sucesso = true,
                 dados = mapeadorTarefas.Map<List<ListarTarefaViewModel>>(tarefaResult.Value)
             });
         }
-        
+
         [HttpGet("{id:guid}")]
         public ActionResult<VisualizarTarefaViewModel> SelecionarPorId(Guid id)
         {
             var tarefaResult = servicoTarefa.SelecionarPorId(id);
-            if (tarefaResult.Errors.Any(x => x.Message.Contains("não encontrada")))
-            {
-                return NotFound(new
-                {
-                    sucesso = false,
-                    error = tarefaResult.Errors.Select(x => x.Message)
-                });
-            }
+
+            if (tarefaResult.IsFailed && RegistroNaoEncontrado(tarefaResult))
+                return NotFound(tarefaResult);
+
             if (tarefaResult.IsFailed)
-            {
-                return StatusCode(500, new
-                {
-                    sucesso = false,
-                    error = tarefaResult.Errors.Select(x => x.Message)
-                });
-            }
+                return InternalError(tarefaResult);
+
             return Ok(new
             {
                 sucesso = true,
@@ -71,30 +57,13 @@ namespace eAgenda.Webapi.Controllers
         [HttpPost]
         public ActionResult<InserirTarefaViewModel> Inserir(InserirTarefaViewModel tarefaVM)
         {
-            var listaErros = ModelState.Values
-                    .SelectMany(x => x.Errors)
-                    .Select(x => x.ErrorMessage);
-
-            if (listaErros.Any())
-            {
-                return BadRequest(new
-                {
-                    sucesso = false,
-                    erros = listaErros.ToList()
-                });
-            }
             var tarefa = mapeadorTarefas.Map<Tarefa>(tarefaVM);
-                        
+
             var tarefaResult = servicoTarefa.Inserir(tarefa);
 
             if (tarefaResult.IsFailed)
-            {
-                return StatusCode(500, new
-                {
-                    sucesso = false,
-                    error = tarefaResult.Errors.Select(x => x.Message)
-                });
-            }
+                return InternalError(tarefaResult);
+
             return Ok(new
             {
                 sucesso = true,
@@ -105,41 +74,18 @@ namespace eAgenda.Webapi.Controllers
         [HttpPut("{id:guid}")]
         public ActionResult<EditarTarefaViewModel> Editar(Guid id, EditarTarefaViewModel tarefaVM)
         {
-            var listaErros = ModelState.Values
-                    .SelectMany(x => x.Errors)
-                    .Select(x => x.ErrorMessage);
-
-            if (listaErros.Any())
-            {
-                return BadRequest(new
-                {
-                    sucesso = false,
-                    erros = listaErros.ToList()
-                });
-            }
             var tarefaSelecionadaResult = servicoTarefa.SelecionarPorId(id);
 
-            if (tarefaSelecionadaResult.Errors.Any(x => x.Message.Contains("não encontrada")))
-            {
-                return NotFound(new
-                {
-                    sucesso = false,
-                    error = tarefaSelecionadaResult.Errors.Select(x => x.Message)
-                });
-            }
+            if (tarefaSelecionadaResult.IsFailed &&  RegistroNaoEncontrado(tarefaSelecionadaResult))
+                return NotFound(tarefaSelecionadaResult);
 
             var tarefa = mapeadorTarefas.Map(tarefaVM, tarefaSelecionadaResult.Value);
 
             var tarefaResult = servicoTarefa.Editar(tarefa);
 
             if (tarefaResult.IsFailed)
-            {
-                return StatusCode(500, new
-                {
-                    sucesso = false,
-                    error = tarefaResult.Errors.Select(x => x.Message)
-                });
-            }
+                return InternalError(tarefaResult);
+
             return Ok(new
             {
                 sucesso = true,
@@ -151,24 +97,13 @@ namespace eAgenda.Webapi.Controllers
         {
             var tarefaResult = servicoTarefa.Excluir(id);
 
-            if (tarefaResult.Errors.Any(x => x.Message.Contains("não encontrada")))
-            {
-                return NotFound(new
-                {
-                    sucesso = false,
-                    error = tarefaResult.Errors.Select(x => x.Message)
-                });
-            }
-            if (tarefaResult.IsFailed)
-            {
-                return StatusCode(500, new
-                {
-                    sucesso = false,
-                    error = tarefaResult.Errors.Select(x => x.Message)
-                });
-            }
-            return NoContent();
+            if (tarefaResult.IsFailed && RegistroNaoEncontrado<Tarefa>(tarefaResult))
+                return NotFound(tarefaResult);
 
+            if (tarefaResult.IsFailed)
+                return InternalError<Tarefa>(tarefaResult);
+
+            return NoContent();
         }
 
     }
