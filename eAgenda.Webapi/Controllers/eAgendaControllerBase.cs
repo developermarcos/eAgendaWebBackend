@@ -7,7 +7,6 @@ namespace eAgenda.Webapi.Controllers
     [ApiController]
     public class eAgendaControllerBase : ControllerBase
     {
-        #region métodos privados
         protected ActionResult InternalError<T>(Result<T> tarefaResult)
         {
             return StatusCode(500, new
@@ -28,6 +27,13 @@ namespace eAgenda.Webapi.Controllers
                 error = tarefaResult.Errors.Select(x => x.Message)
             });
         }
-        #endregion
+        protected ActionResult BadRequest<T>(Result<T> tarefaResult)
+        {
+            return StatusCode(300, new
+            {
+                sucesso = false,
+                error = tarefaResult.Errors.Select(x => x.Message)
+            });
+        }
     }
 }
