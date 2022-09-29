@@ -5,6 +5,7 @@ using eAgenda.Infra.Configs;
 using eAgenda.Infra.Orm;
 using eAgenda.Infra.Orm.ModuloContato;
 using eAgenda.Webapi.ViewModels.Contatos;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -13,6 +14,7 @@ namespace eAgenda.Webapi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class ContatosController : eAgendaControllerBase
     {
         private readonly ServicoContato servicoContato;
@@ -96,7 +98,7 @@ namespace eAgenda.Webapi.Controllers
             });
         }
         [HttpDelete]
-        public ActionResult Editar(Contato contato)
+        public ActionResult Excluir(Contato contato)
         {
             var registroResult = servicoContato.Excluir(contato);
 

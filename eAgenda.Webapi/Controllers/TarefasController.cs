@@ -97,6 +97,7 @@ namespace eAgenda.Webapi.Controllers
                 dados = mapeadorTarefas.Map<VisualizarTarefaViewModel>(registroResult.Value)
             });
         }
+
         [HttpDelete("{id:guid}")]
         public ActionResult Excluir(Guid id)
         {
