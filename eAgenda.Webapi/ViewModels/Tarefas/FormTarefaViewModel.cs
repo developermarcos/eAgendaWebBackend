@@ -11,6 +11,10 @@ namespace eAgenda.Webapi.ViewModels.Tarefas
         [Required(ErrorMessage = "O campo {0} é obrigatório")]
         public PrioridadeTarefaEnum Prioridade { get; set; }
         public List<FormItemTarefaViewModel> Itens{ get; set; }
+        public FormTarefaViewModel()
+        {
+            Itens = new List<FormItemTarefaViewModel>();
+        }
     }
 
     public class InserirTarefaViewModel : FormTarefaViewModel

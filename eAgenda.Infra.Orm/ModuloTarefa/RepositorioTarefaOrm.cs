@@ -45,16 +45,24 @@ namespace eAgenda.Infra.Orm.ModuloTarefa
             return tarefas.ToList();
         }
 
-        public List<Tarefa> SelecionarTodos(StatusTarefaEnum status)
+        public List<Tarefa> SelecionarTodos(StatusTarefaEnum status, Guid usuarioId = new Guid())
         {
             if (status == StatusTarefaEnum.Concluidas)
-                return tarefas.Where(x => x.PercentualConcluido == 100).ToList();
+                return tarefas
+                    .Where(x => x.PercentualConcluido == 100)
+                    .Where(x => x.UsuarioId == usuarioId)
+                    .ToList();
 
             else if (status == StatusTarefaEnum.Pendentes)
-                return tarefas.Where(x => x.PercentualConcluido < 100).ToList();
+                return tarefas
+                    .Where(x => x.PercentualConcluido < 100)
+                    .Where(x => x.UsuarioId == usuarioId)
+                    .ToList();
 
             else
-                return tarefas.ToList();
+                return tarefas
+                    .Where(x => x.UsuarioId == usuarioId)
+                    .ToList();
         }
     }
 }
