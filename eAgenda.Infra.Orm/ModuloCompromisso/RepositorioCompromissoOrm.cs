@@ -35,7 +35,9 @@ namespace eAgenda.Infra.Orm.ModuloCompromisso
 
         public Compromisso SelecionarPorId(Guid id)
         {
-            return compromissos.SingleOrDefault(x => x.Id == id);
+            return compromissos
+                    .Include(x => x.Contato)
+                    .SingleOrDefault(x => x.Id == id);
         }
 
         public List<Compromisso> SelecionarTodos()

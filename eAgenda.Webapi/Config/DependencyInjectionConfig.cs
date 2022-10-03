@@ -1,11 +1,14 @@
 ﻿using eAgenda.Aplicacao.ModuloAutenticacao;
+using eAgenda.Aplicacao.ModuloCompromisso;
 using eAgenda.Aplicacao.ModuloContato;
 using eAgenda.Aplicacao.ModuloTarefa;
 using eAgenda.Dominio;
+using eAgenda.Dominio.ModuloCompromisso;
 using eAgenda.Dominio.ModuloContato;
 using eAgenda.Dominio.ModuloTarefa;
 using eAgenda.Infra.Configs;
 using eAgenda.Infra.Orm;
+using eAgenda.Infra.Orm.ModuloCompromisso;
 using eAgenda.Infra.Orm.ModuloContato;
 using eAgenda.Infra.Orm.ModuloTarefa;
 using Microsoft.Extensions.DependencyInjection;
@@ -27,6 +30,9 @@ namespace eAgenda.Webapi.Config
 
             services.AddScoped<IRepositorioContato, RepositorioContatoOrm>();
             services.AddTransient<ServicoContato>();
+            
+            services.AddScoped<IRepositorioCompromisso, RepositorioCompromissoOrm>();
+            services.AddTransient<ServicoCompromisso>();
 
             services.AddTransient<ServicoAutenticacao>();
         }
