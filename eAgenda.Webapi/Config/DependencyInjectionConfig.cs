@@ -40,6 +40,10 @@ namespace eAgenda.Webapi.Config
             services.AddScoped<IRepositorioCategoria, RepositorioCategoriaOrm>();
             services.AddTransient<ServicoCategoria>();
 
+            services.AddScoped<IRepositorioDespesa, RepositorioDespesaOrm>();
+            services.AddTransient<ServicoDespesa>();
+
+
             services.AddTransient<ServicoAutenticacao>();
         }
     }

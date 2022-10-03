@@ -1,9 +1,6 @@
 ﻿using AutoMapper;
 using eAgenda.Aplicacao.ModuloContato;
 using eAgenda.Dominio.ModuloContato;
-using eAgenda.Infra.Configs;
-using eAgenda.Infra.Orm;
-using eAgenda.Infra.Orm.ModuloContato;
 using eAgenda.Webapi.ViewModels.Contatos;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
