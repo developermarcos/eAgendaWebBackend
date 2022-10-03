@@ -38,6 +38,13 @@ namespace eAgenda.Infra.Orm.ModuloDespesa
             return categorias.SingleOrDefault(x => x.Id == id);
         }
 
+        public Categoria SelecionarPorId(Guid id, bool carregarDespesas = false)
+        {
+            return categorias
+                    .Include(x => x.Despesas)
+                    .SingleOrDefault(x => x.Id == id);
+        }
+
         public List<Categoria> SelecionarTodos(bool incluirMateriasEhQuestoes)
         {
             return categorias.ToList();
@@ -47,6 +54,5 @@ namespace eAgenda.Infra.Orm.ModuloDespesa
         {
             return categorias.ToList();
         }
-
     }
 }

@@ -129,13 +129,13 @@ namespace eAgenda.Aplicacao.ModuloDespesa
             }
         }
 
-        public Result<Categoria> SelecionarPorId(Guid id)
+        public Result<Categoria> SelecionarPorId(Guid id, bool carregarDespesas = false)
         {
             Log.Logger.Debug("Tentando selecionar categoria {CategoriaId}...", id);
 
             try
             {
-                var categoria = repositorioCategoria.SelecionarPorId(id);
+                var categoria = repositorioCategoria.SelecionarPorId(id, carregarDespesas);
 
                 if (categoria == null)
                 {
