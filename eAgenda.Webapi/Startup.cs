@@ -36,6 +36,14 @@ namespace eAgenda.Webapi
             services.ConfigurarSwagger();
 
             services.ConfigurarJwt();
+
+            services.AddCors(options =>
+            {
+                options.AddPolicy("Desenvolvimento", services => services
+                    .WithOrigins("http://localhost:4200")
+                    .AllowAnyMethod()
+                    .AllowAnyHeader());
+            });
         }
 
        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -49,6 +57,8 @@ namespace eAgenda.Webapi
             }
 
             app.UseHttpsRedirection();
+
+            app.UseCors("Desenvolvimento");
 
             app.UseRouting();
 
