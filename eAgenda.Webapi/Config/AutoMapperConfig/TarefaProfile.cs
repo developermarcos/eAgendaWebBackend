@@ -19,6 +19,7 @@ namespace eAgenda.Webapi.CreateMap.AutoMapperCreateMap
         {
             CreateMap<InserirTarefaViewModel, Tarefa>()
                 .ForMember(destino => destino.Itens, opt => opt.Ignore())
+                .ForMember(destino => destino.Id, opt => opt.Ignore())
                 .AfterMap((viewModel, tarefa) =>
                 {
                     foreach (var itemVM in viewModel.Itens)
@@ -30,6 +31,7 @@ namespace eAgenda.Webapi.CreateMap.AutoMapperCreateMap
                 });
             CreateMap<EditarTarefaViewModel, Tarefa>()
                 .ForMember(destino => destino.Itens, opt => opt.Ignore())
+                .ForMember(destino => destino.Id, opt => opt.Ignore())
                 .AfterMap((viewModel, tarefa) =>
                 {
                     foreach (var itemVM in viewModel.Itens)
@@ -47,7 +49,7 @@ namespace eAgenda.Webapi.CreateMap.AutoMapperCreateMap
                             var item = new ItemTarefa(itemVM.Titulo);
                             tarefa.AdicionarItem(item);
                         }
-                        else
+                        if (itemVM.Status == StatusItemTarefa.Removido)
                         {
                             tarefa.RemoverItem(itemVM.Id);
                         }
@@ -69,6 +71,10 @@ namespace eAgenda.Webapi.CreateMap.AutoMapperCreateMap
 
             CreateMap<ItemTarefa, VisualizarItemTarefaViewModel>()
                 .ForMember(destino => destino.Status, opt => opt.MapFrom(origen => origen.Concluido ? "Concluído" : "Pendente"));
+
+            CreateMap<Tarefa, FormTarefaViewModel>();
+
+            CreateMap<ItemTarefa, FormItemTarefaViewModel>();
         }
     }
 }

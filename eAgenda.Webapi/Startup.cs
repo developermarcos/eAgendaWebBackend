@@ -39,7 +39,8 @@ namespace eAgenda.Webapi
 
             services.AddCors(options =>
             {
-                options.AddPolicy("Desenvolvimento", services => services
+                options.AddPolicy("Desenvolvimento", 
+                    services => services
                     .WithOrigins("http://localhost:4200")
                     .AllowAnyMethod()
                     .AllowAnyHeader());
@@ -56,7 +57,7 @@ namespace eAgenda.Webapi
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "eAgenda.Webapi v1"));
             }
 
-            app.UseHttpsRedirection();
+            //app.UseHttpsRedirection();
 
             app.UseCors("Desenvolvimento");
 

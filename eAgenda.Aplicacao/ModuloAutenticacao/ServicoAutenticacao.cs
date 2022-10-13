@@ -48,7 +48,7 @@ namespace eAgenda.Aplicacao.ModuloAutenticacao
                 return Result.Fail(msgErro);
             }
 
-            return Result.Ok();
+            return Result.Ok(usuario);
 
         }
 
@@ -81,6 +81,12 @@ namespace eAgenda.Aplicacao.ModuloAutenticacao
         {
             await signInManager.SignOutAsync();
             Log.Logger.Debug("Sessão do usuário {@email} removida...", email);
+            return Result.Ok();
+        }
+        public async Task<Result<Usuario>> Sair()
+        {
+            await signInManager.SignOutAsync();
+            Log.Logger.Debug("Sessão do usuário removida...");
             return Result.Ok();
         }
     }

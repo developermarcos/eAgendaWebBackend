@@ -10,13 +10,13 @@ namespace eAgenda.Webapi
     {
         public static void Main(string[] args)
         {
+                CreateHostBuilder(args).Build().Run();
             ConfiguracaoLogseAgenda.ConfigurarEscritaLogs();
 
             Log.Logger.Information("Iniciando o servidor da alicação e-Agenda...");
 
             try
             {
-                CreateHostBuilder(args).Build().Run();
             }catch(Exception ex)
             {
                 Log.Logger.Fatal(ex, "O servidor da aplicação e-Agenda parou inesperadamente.");

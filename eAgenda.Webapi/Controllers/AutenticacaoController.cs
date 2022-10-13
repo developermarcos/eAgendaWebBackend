@@ -37,14 +37,21 @@ namespace eAgenda.Webapi.Controllers
             return Ok(new
             {
                 sucesso = true,
-                dados = registrarUsuarioResult.Value
+                dados = GerarJst(registrarUsuarioResult.Value)
             });
+        }
+        [HttpPost("sair")]
+        public async Task<ActionResult> Sair()
+        {
+            await servicoAutenticacao.Sair();
+
+            return Ok();
         }
 
         [HttpPost("autenticar")]
         public async Task<ActionResult> AutenticarUsuario(AutenticarUsuarioViewModel usuarioVM)
         {
-            
+
             var registrarUsuarioResult = await servicoAutenticacao.AutenticarUsuario(usuarioVM.Email, usuarioVM.Senha);
 
             if (registrarUsuarioResult.IsFailed)

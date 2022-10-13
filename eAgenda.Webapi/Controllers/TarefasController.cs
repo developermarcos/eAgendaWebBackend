@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
+using Taikandi;
 
 namespace eAgenda.Webapi.Controllers
 {
@@ -39,7 +40,7 @@ namespace eAgenda.Webapi.Controllers
             });
         }
 
-        [HttpGet("{id:guid}")]
+        [HttpGet("visualizao-completa/{id:guid}")]
         public ActionResult<VisualizarTarefaViewModel> SelecionarPorId(Guid id)
         {
             var registroResult = servicoTarefa.SelecionarPorId(id);
@@ -54,6 +55,24 @@ namespace eAgenda.Webapi.Controllers
             {
                 sucesso = true,
                 dados = mapeadorTarefas.Map<VisualizarTarefaViewModel>(registroResult.Value)
+            });
+        }
+
+        [HttpGet("{id:guid}")]
+        public ActionResult<FormTarefaViewModel> SelecionarTarefaPorId(Guid id)
+        {
+            var tarefaResult = servicoTarefa.SelecionarPorId(id);
+
+            if (tarefaResult.IsFailed && RegistroNaoEncontrado(tarefaResult))
+                return NotFound(tarefaResult);
+
+            if (tarefaResult.IsFailed)
+                return InternalError(tarefaResult);
+
+            return Ok(new
+            {
+                sucesso = true,
+                dados = mapeadorTarefas.Map<FormTarefaViewModel>(tarefaResult.Value)
             });
         }
 

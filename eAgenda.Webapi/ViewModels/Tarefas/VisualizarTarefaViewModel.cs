@@ -9,6 +9,7 @@ namespace eAgenda.Webapi.ViewModels.Tarefas
         {
             Itens = new List<VisualizarItemTarefaViewModel>();
         }
+        public Guid Id { get; set; }
         public string Titulo { get; set; }
         public DateTime DataCriacao { get; set; }
         public DateTime? DataConclusao { get; set; }
