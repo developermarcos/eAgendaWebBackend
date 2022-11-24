@@ -10,6 +10,9 @@ namespace eAgenda.Webapi.Config
             services.AddControllers(config =>
             {
                 config.Filters.Add(new ValidarViewModelActionFilter());
+            }).AddJsonOptions(options =>
+            {
+                options.JsonSerializerOptions.Converters.Add(new TimeSpanToStringConverter());
             });
         }
     }

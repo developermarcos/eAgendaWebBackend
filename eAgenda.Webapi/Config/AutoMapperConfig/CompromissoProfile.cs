@@ -19,8 +19,10 @@ namespace eAgenda.Webapi.Config.AutoMapperConfig
         private void ConverterViewModelParaEntidade()
         {
             CreateMap<FormCompromissoViewModel, Compromisso>()
+                .ForMember(destino => destino.Id, opt => opt.Ignore())
                 .ForMember(destino => destino.Link, opt => opt.Ignore())
                 .ForMember(destino => destino.Local, opt => opt.Ignore())
+                .ForMember(destino => destino.TipoLocal, opt => opt.Ignore())
                 .AfterMap((viewModel, compromisso) =>
                 {
                     if (viewModel.TipoLocal == TipoLocalizacaoCompromissoEnum.Presencial)
@@ -38,6 +40,7 @@ namespace eAgenda.Webapi.Config.AutoMapperConfig
             CreateMap<Compromisso, VisualizarCompromissoViewModel>()
                 .ForMember(destino => destino.Link, opt => opt.Ignore())
                 .ForMember(destino => destino.Local, opt => opt.Ignore())
+                .ForMember(destino => destino.TipoLocal, opt => opt.MapFrom(origem => origem.TipoLocal.GetDescription()))
                 .AfterMap((compromisso, viewModel) =>
                 {
                     if (compromisso.TipoLocal == TipoLocalizacaoCompromissoEnum.Presencial)

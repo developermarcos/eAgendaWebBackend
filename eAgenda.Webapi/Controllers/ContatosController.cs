@@ -109,5 +109,23 @@ namespace eAgenda.Webapi.Controllers
 
             return NoContent();
         }
+        [HttpDelete("{id:guid}")]
+        public ActionResult Excluir(Guid id)
+        {
+            var registroEncontradoResult = servicoContato.SelecionarPorId(id);
+
+            if(registroEncontradoResult.IsFailed)
+                return NotFound(registroEncontradoResult);
+
+            var registroResult = servicoContato.Excluir(registroEncontradoResult.Value);
+
+            if (registroResult.IsFailed && RegistroNaoEncontrado<Contato>(registroResult))
+                return NotFound(registroResult);
+
+            if (registroResult.IsFailed)
+                return InternalError<Contato>(registroResult);
+
+            return NoContent();
+        }
     }
 }

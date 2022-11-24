@@ -50,7 +50,7 @@ namespace eAgenda.Webapi.Controllers
 
             if (registroResult.IsFailed)
                 return InternalError(registroResult);
-
+            
             return Ok(new
             {
                 sucesso = true,
